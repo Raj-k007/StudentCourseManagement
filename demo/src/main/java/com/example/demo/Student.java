@@ -1,11 +1,19 @@
 package com.example.demo;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import jakarta.persistence.*;
 
 import javax.annotation.processing.Generated;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name="students")
 public class Student {
     @Id
@@ -20,44 +28,44 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
-    public Course getCourse(){
-        return course;
-    }
-    public void setCourse(Course course){
-        this.course=course;
-    }
-    public Student(){}
-    public Student( String name, String email, int age){
-        this.age=age;
-        this.email=email;
-        this.name=name;
-    }
-    public Long getId() {
-        return id;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
+//    public Course getCourse(){
+//        return course;
+//    }
+//    public void setCourse(Course course){
+//        this.course=course;
+//    }
+//    public Student(){}
+//    public Student( String name, String email, int age){
+//        this.age=age;
+//        this.email=email;
+//        this.name=name;
+//    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
+//
+//    public int getAge() {
+//        return age;
+//    }
+//
+//    public void setAge(int age) {
+//        this.age = age;
+//    }
 }

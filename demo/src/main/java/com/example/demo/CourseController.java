@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,33 +14,35 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/Courses")
+@RequiredArgsConstructor
 public class CourseController {
     private final CourseService courseService;
+    private final StudentService studentService;
     @Autowired
-    public CourseController(CourseService courseService){
-        this.courseService=courseService;
-    }
+//    public CourseController(CourseService courseService){
+//        this.courseService=courseService;
+//    }
 
     @GetMapping
-    public List<Course> getCourses(){
+    public List<CourseResponse> getCourses(){
         return courseService.findAll();
     }
 
     @GetMapping("/{courseId}")
-    public Course getCourseById(@PathVariable int courseId){
+    public CourseResponse getCourseById(@PathVariable int courseId){
         return courseService.findById(courseId);
     }
 
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody Course course){
-        Course created =  courseService.createCourse(course);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<CourseResponse> createCourse(@Valid @RequestBody CourseRequest request){
+        CourseResponse response =  courseService.createCourse(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{courseId}")
-    public ResponseEntity<Course> updateCourse(@PathVariable int courseId, @RequestBody Course course){
-        Course updated = courseService.updateCourse(courseId, course);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<CourseResponse> updateCourse(@PathVariable int courseId, @Valid @RequestBody CourseRequest request){
+        CourseResponse response = courseService.updateCourse(courseId, request);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{courseId}")
@@ -48,7 +52,7 @@ public class CourseController {
     }
 
     @GetMapping(params = "courseName")
-    public List<Course> search(@RequestParam String courseName){
+    public List<CourseResponse> search(@RequestParam String courseName){
         return courseService.searchCourse(courseName);
     }
 
