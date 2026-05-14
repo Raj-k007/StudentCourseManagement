@@ -39,6 +39,6 @@ public class CourseService {
     }
 
     public List<Course> searchCourse(String courseName){
-        return courseRepository.findBycourseName(courseName);
+        return courseRepository.findByCourseName(courseName);
     }
 }

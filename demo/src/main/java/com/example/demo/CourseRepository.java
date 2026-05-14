@@ -10,11 +10,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 interface CourseRepository extends JpaRepository<Course, Integer>{
-    List<Course> findBycourseName(String courseName);
+    List<Course> findByCourseName(String courseName);
 
     Boolean existsByCourseName(String courseName);
 
-    boolean existsBycourseName(String courseName);
+//    boolean existsBycourseName(String courseName);
 }
 
 //@Repository
