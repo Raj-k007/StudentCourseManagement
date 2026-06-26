@@ -15,6 +15,8 @@ class StudentRequest {
     @Min(18) @Max(100)
     private int age;
 
+    private String courseId;
+
 }
 
 @Data

@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 class CourseRequest {
-    private String courseId;
+    @NotBlank
+    private int courseId;
     private String courseName;
     private String instructor;
     private long durationHrs;
@@ -23,9 +25,9 @@ class CourseRequest {
 @AllArgsConstructor
 @NoArgsConstructor
 class CourseResponse {
-    private String courseId;
+    private int courseId;
     private String courseName;
     private String instructor;
     private long durationHrs;
-    private List<Student> studentList;
+    private List<StudentResponse> students;
 }

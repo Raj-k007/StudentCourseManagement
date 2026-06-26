@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,16 +17,17 @@ public class StudentService {
 //        this.studentRepository = studentRepository;
 //        this.courseRepository = courseRepository;
 //    }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<StudentResponse> findAll(){
 
         return studentMapper.toResponseList(studentRepository.findAll());
     }
-
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public StudentResponse findById(Long id){
         Student student = studentRepository.findById(id).orElseThrow(()-> new RuntimeException("Student not found with id"+ id));
         return studentMapper.toResponse(student);
     }
-
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public StudentResponse createStudent(StudentRequest request){
         Student student = studentMapper.toEntity(request);
         if(studentRepository.existsByEmail(student.getEmail())) {
@@ -34,6 +36,7 @@ public class StudentService {
         Student savedStudent = studentRepository.save(student);
         return studentMapper.toResponse(savedStudent);
     }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     StudentResponse enrolStudent(Long id, int courseId){
         Student st = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Student not found"));
@@ -41,11 +44,13 @@ public class StudentService {
         course.getStudents().add(st);
         return studentMapper.toResponse(studentRepository.save(st));
     }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public StudentResponse updateStudent(Long id, StudentRequest request){
         Student existing = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id"+ id));
         studentMapper.updateEntity(request, existing);
         return studentMapper.toResponse(existing);
     }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(Long id){
         if (!studentRepository.existsById(id)) {
             throw new RuntimeException("Student not found: " + id);

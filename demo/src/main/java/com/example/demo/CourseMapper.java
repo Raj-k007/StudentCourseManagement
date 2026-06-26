@@ -6,7 +6,7 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring", uses={StudentMapper.class})
 public interface CourseMapper {
 
     Course toEntity(CourseRequest request);
@@ -14,7 +14,9 @@ public interface CourseMapper {
     @Mapping(source = "students", target = "students")
     CourseResponse toResponse(Course course);
 
-    StudentResponse toResponse(Student student);
+//    StudentResponse toStudentResponse(Student student);
+
     List<CourseResponse> toList(List<Course> courseList);
+
     Course updateCourse(CourseRequest request, @MappingTarget Course existing);
 }
