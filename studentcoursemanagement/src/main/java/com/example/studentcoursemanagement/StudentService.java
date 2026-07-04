@@ -1,9 +1,11 @@
 package com.example.studentcoursemanagement;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
+//import org.springframework.cache.annotation.Caching;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -28,27 +30,30 @@ public class StudentService {
     }
 
     @Cacheable(value = "students", key = "#id")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     public StudentResponse findById(Long id){
         Student student = studentRepository.findById(id).orElseThrow(()-> new RuntimeException("Student not found with id"+ id));
         return studentMapper.toResponse(student);
     }
 
-    @Cacheable(value = "students", key = "#email")
-    StudentResponse findStudentByEmail(String email){
-        return studentMapper.toResponse(studentRepository.findByEmail(email));
-    }
-
+//    @Cacheable(value = "students", key = "#email")
+//    StudentResponse findStudentByEmail(String email){
+//        return studentMapper.toResponse(studentRepository.findByEmail(email));
+//    }
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @CacheEvict(value = "students", key= "'all-students'")
     public StudentResponse createStudent(StudentRequest request){
         Student student = studentMapper.toEntity(request);
-        if(findStudentByEmail(request.getEmail()) != null) {
+        if(studentRepository.findByEmail(request.getEmail())!=null) {
             throw new RuntimeException("Student already exists with id"+student.getId());
         }
         Student savedStudent = studentRepository.save(student);
         return studentMapper.toResponse(savedStudent);
     }
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @CacheEvict(value = "students", key= "'all-students'")
     StudentResponse enrolStudent(Long id, int courseId){
         Student st = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Student not found"));
@@ -57,8 +62,8 @@ public class StudentService {
         emailService.sendEmail(st.getEmail());
         return studentMapper.toResponse(studentRepository.save(st));
     }
-
-    @CacheEvict(value = "students", key="#id")
+    @Transactional
+    @CachePut(value = "students", key="#id")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public StudentResponse updateStudent(Long id, StudentRequest request){
         Student existing = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id"+ id));
@@ -66,16 +71,19 @@ public class StudentService {
         return studentMapper.toResponse(existing);
     }
 
-    @Caching(evict ={
-            @CacheEvict(value = "students", key = "#id"),
-            @CacheEvict(value = "students", key = "'all-students'")
-    })
+    @Transactional
+    @CacheEvict(value = "students", allEntries = true, beforeInvocation = false)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(Long id){
-        if (findById(id) != null) {
+        if (!studentRepository.existsById(id)) {
             throw new RuntimeException("Student not found: " + id);
         }
         studentRepository.deleteById(id);
+//        try {
+//            Thread.sleep(500);
+//        }catch (InterruptedException e) {
+//
+//        }
     }
 
 //    public StudentService(StudentRepository studentRepository){

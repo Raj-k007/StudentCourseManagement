@@ -13,13 +13,11 @@ public interface StudentMapper {
     @Mapping(source = "course.courseName", target = "courseName")
     StudentResponse toResponse(Student student);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "course", ignore = true)
     Student toEntity(StudentRequest studentRequest);
 
     List<StudentResponse> toResponseList(List<Student> studentList);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "course", ignore = true)
     Student updateEntity(StudentRequest request, @MappingTarget Student student);
 }

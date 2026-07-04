@@ -1,7 +1,9 @@
 package com.example.studentcoursemanagement;
 
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
+@Service
 public class EmailService {
     @Async("taskExecutor")
     public void sendEmail(String email){

@@ -1,11 +1,11 @@
 package com.example.studentcoursemanagement;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 class CourseRequest {
-    @NotBlank
+    @NotNull
     private int courseId;
     private String courseName;
     private String instructor;

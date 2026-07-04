@@ -1,5 +1,6 @@
 package com.example.studentcoursemanagement;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -30,8 +31,9 @@ public class CourseService {
         Course course = courseRepository.findById(id).orElseThrow(()-> new RuntimeException("Course with course id "+id+" not found"));
         return courseMapper.toResponse(course);
     }
-
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @CacheEvict(value = "courses", key= "'all-courses")
     public CourseResponse createCourse(CourseRequest request){
         Course course = courseMapper.toEntity(request);
         if(courseRepository.existsByCourseName(course.getCourseName())){
@@ -39,7 +41,7 @@ public class CourseService {
         }
         return courseMapper.toResponse(courseRepository.save(course));
     }
-
+    @Transactional
     @CachePut(value = "courses", key = "#id")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public CourseResponse updateCourse(int id, CourseRequest request){
@@ -50,9 +52,10 @@ public class CourseService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "courses", key = "#id"),
-            @CacheEvict(value = "courses", key = "'all-courses'")
+            @CacheEvict(value = "courses", key = "#id", beforeInvocation = false),
+            @CacheEvict(value = "courses", key = "'all-courses'", beforeInvocation = false)
     })
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteCourse(int id){
         if(!courseRepository.existsById(id)){
